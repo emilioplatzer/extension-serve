@@ -1,7 +1,7 @@
 {
   "name": "extension-serve",
   "description": "serve static or compiling or transforming by extension",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Emilio Platzer",
     "email": "emilioplatzer@outlook.com"
