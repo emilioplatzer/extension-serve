@@ -2,11 +2,18 @@
   "name": "extension-serve",
   "description": "serve static or compiling or transforming by extension",
   "version": "0.0.1",
-  "author": "Emilio Platzer <emilioplatzer@outlook.com>",
+  "author": {
+    "name": "Emilio Platzer",
+    "email": "emilioplatzer@outlook.com"
+  },
   "license": "MIT",
-  "repository": "emiloplatzer/extension-serve",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emiloplatzer/extension-serve"
+  },
   "dependencies": {
-    "extension-serve-static": ">=0.1.6"
+    "extension-serve-static": ">=0.1.6",
+    "send": "^0.13.0"
   },
   "main": "bin/extension-serve.js",
   "devDependencies": {
@@ -22,5 +29,15 @@
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "start": "node example/server.js"
-  }
+  },
+  "readme": "# extension-serve\nserve static or compiling or transforming by extension\n",
+  "readmeFilename": "README.md",
+  "gitHead": "4fc4eadd5396d6c2a49b53a2c64b32579195958e",
+  "bugs": {
+    "url": "https://github.com/emiloplatzer/extension-serve/issues"
+  },
+  "homepage": "https://github.com/emiloplatzer/extension-serve",
+  "_id": "extension-serve@0.0.1",
+  "_shasum": "b13986337698a7523dbee16e8a99a9ba99f4c42b",
+  "_from": "extension-serve@^0.0.1"
 }
