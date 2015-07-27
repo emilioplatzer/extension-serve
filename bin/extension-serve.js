@@ -4,9 +4,49 @@ var Path = require('path');
 var send = require('send');
 var fs = require('fs-promise');
 var jade = require('jade');
-var extensionServe = require('extension-serve-static');
+var ExtensionServe = require('extension-serve-static');
 
-ExensionServe.serveConvert=function serveConvert(root, opts){
+if("with markdown support"){
+    var marked = require("marked");
+    marked.setOptions({
+        renderer: new marked.Renderer(),
+        gfm: true,
+        tables: true,
+        breaks: false,
+        pedantic: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: false,
+        highlightx: function (code, lang, callback) {
+            require('pygmentize-bundled')({ lang: lang, format: 'html' }, code, function (err, result) {
+                callback(err, result.toString());
+            });
+        },
+        highlight: function(code){
+            return require('highlight.js').highlightAuto(code).value;
+        }
+    });
+    var markdownRender=function markdownRender(content){
+        return Promises.make(function(resolve, reject){
+            marked(content,function(err,ok){
+                if(err){
+                    reject(err);
+                }else{
+                    var html='<!doctype html>\n<html><head>'+
+                        '<link href="/markdown.css" media="all" rel="stylesheet" />'+
+                        '<link href="/markdown2.css" media="all" rel="stylesheet" />'+
+                        '<link href="/github.css" media="all" rel="stylesheet" />'+
+                        '</head><body><article class="markdown-body entry-content" itemprop="mainContentOfPage">'+
+                        ok+
+                        '</article></body></html>';
+                    resolve(html);
+                }
+            });
+        });
+    }
+}
+
+ExtensionServe.serveConvert=function serveConvert(root, opts){
     return function(req,res,next){
         var ext=path.extname(req.path).substring(1);
         var convert=serveConvert.fileConverters[path.basename(req.path)]||serveConvert.converters[ext];
@@ -34,7 +74,7 @@ ExensionServe.serveConvert=function serveConvert(root, opts){
     };
 }
 
-extensionServe.serveConvert.converters={
+ExtensionServe.serveConvert.converters={
     jade:function(content){
         return Promises.start(function(){
             return jade.render(content,{});
@@ -44,10 +84,10 @@ extensionServe.serveConvert.converters={
     md:markdownRender
 }
 
-extensionServe.serveConvert.fileConverters={
+ExtensionServe.serveConvert.fileConverters={
 }
 
-extensionServe.serve = function serve(req,res,path,opts){
+ExtensionServe.serve = function serve(req,res,path,opts){
     var fileName;
     return Promises.start(function(){
         fileName=opts.root+'/'+path;
@@ -60,13 +100,13 @@ extensionServe.serve = function serve(req,res,path,opts){
                         send(req,path,opts).pipe(res).on('end',resolve).on('error',reject);
                     });
                 }else{
-                    return Promises.reject(new Error('extensionServe.serve could not serve directory'));
+                    return Promises.reject(new Error('ExtensionServe.serve could not serve directory'));
                 }
             });
         }else{
-            return ExensionServe.serveConvert(opts.root)(req,res,next);
+            return ExtensionServe.serveConvert(opts.root)(req,res,next);
         }
     }).catch(MiniTools.serveErr(req,res));
 }
 
-module.exports=extensionServe;
+module.exports=ExtensionServe;
