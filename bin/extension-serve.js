@@ -5,6 +5,8 @@ var send = require('send');
 var fs = require('fs-promise');
 var jade = require('jade');
 var ExtensionServe = require('extension-serve-static');
+var Promises = require('best-promise');
+var MiniTools = require('mini-tools');
 
 if("with markdown support"){
     var marked = require("marked");
@@ -48,27 +50,36 @@ if("with markdown support"){
 
 ExtensionServe.serveConvert=function serveConvert(root, opts){
     return function(req,res,next){
-        var ext=path.extname(req.path).substring(1);
-        var convert=serveConvert.fileConverters[path.basename(req.path)]||serveConvert.converters[ext];
-        if(!convert){
-            next();
+        if(opts.directFilename){
+            var fileName=root;
         }else{
             var fileName=root+'/'+req.path;
-            Promises.start(function(){
+        }
+        var ext=Path.extname(fileName).substring(1);
+        var convert=ExtensionServe.serveConvert.fileConverters[Path.basename(fileName)]||ExtensionServe.serveConvert.converters[ext];
+        if(!convert){
+            return Promises.start(function(){
+                return next();
+            });
+        }else{
+            return Promises.start(function(){
                 return fs.readFile(fileName, {encoding: 'utf8'});
             }).then(
                 convert
-            ).catch(function(err){
-                return '<H1>ERROR</H1><PRE>'+err;
-            }).then(function(buf){
+            ).then(function(buf){
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
                 if(typeof buf==="string"){
-                    var length=System.Text.ASCIIEncoding.Unicode.GetByteCount(string);
+                    var otherbuf=new Buffer(buf);
+                    var length=otherbuf.length;
                 }else{
                     var length=buf.length;
                 }
                 res.setHeader('Content-Length', length);
                 res.end(buf);
+            }).catch(function(err){
+                console.log('ERROR CONVERT',err);
+                console.log('stack',err.stack);
+                throw err;
             });
         }
     };
@@ -87,25 +98,21 @@ ExtensionServe.serveConvert.converters={
 ExtensionServe.serveConvert.fileConverters={
 }
 
-ExtensionServe.serve = function serve(req,res,path,opts){
+ExtensionServe.serveFile = function serveFile(req,res,path,opts){
     var fileName;
     return Promises.start(function(){
         fileName=opts.root+'/'+path;
-        return fs.exist(fileName);
-    }).then(function(exists){
-        if(exists){
+        ExtensionServe.serveConvert(fileName,{directFilename:true})(req,res,function(){
             return fs.stat(fileName).then(function(stat){
                 if(!stat.isDirectory()){
                     return new Promises.Promise(function(resolve, reject){
                         send(req,path,opts).pipe(res).on('end',resolve).on('error',reject);
                     });
                 }else{
-                    return Promises.reject(new Error('ExtensionServe.serve could not serve directory'));
+                    return Promises.reject(new Error('ExtensionServe.serveFile could not serve directory'));
                 }
             });
-        }else{
-            return ExtensionServe.serveConvert(opts.root)(req,res,next);
-        }
+        });
     }).catch(MiniTools.serveErr(req,res));
 }
 

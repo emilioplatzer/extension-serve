@@ -1,7 +1,7 @@
 {
   "name": "extension-serve",
   "description": "serve static or compiling or transforming by extension",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": {
     "name": "Emilio Platzer",
     "email": "emilioplatzer@outlook.com"
@@ -12,12 +12,15 @@
     "url": "https://github.com/emiloplatzer/extension-serve"
   },
   "dependencies": {
-    "extension-serve-static": ">=0.1.6",
     "highlight.js": "^8.6.0",
     "jade": "^1.11.0",
     "marked": "^0.3.3",
     "pygmentize-bundled": "^2.3.0",
-    "send": "^0.13.0"
+    "send": "^0.13.0",
+
+    "best-promise": ">=0.2.2",
+    "extension-serve-static": ">=0.1.6",
+    "mini-tools": ">=0.0.2"
   },
   "main": "bin/extension-serve.js",
   "devDependencies": {
