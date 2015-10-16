@@ -1,12 +1,20 @@
 "use strict";
 
+var ExtensionServe=function(){
+    return ExtensionServeStatic.getMiddleware.apply(ExtensionServe,arguments);
+};
+
 var Path = require('path');
 var send = require('send');
+var Promises = require('best-promise');
 var fs = require('fs-promise');
 var jade = require('jade');
-var ExtensionServe = require('extension-serve-static');
-var Promises = require('best-promise');
+var ExtensionServeStatic = require('extension-serve-static');
 var MiniTools = require('mini-tools');
+
+ExtensionServe.getMiddleware=function(){
+    
+}
 
 if("with markdown support"){
     var marked = require("marked");

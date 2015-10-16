@@ -12,15 +12,16 @@
     "url": "https://github.com/emiloplatzer/extension-serve"
   },
   "dependencies": {
-    "highlight.js": "^8.6.0",
+    "fs-promise": "^0.3.1",
+    "highlight.js": "^8.7.0",
     "jade": "^1.11.0",
-    "marked": "^0.3.3",
+    "marked": "^0.3.5",
     "pygmentize-bundled": "^2.3.0",
     "send": "^0.13.0",
 
-    "best-promise": ">=0.2.2",
+    "best-promise": ">=0.2.3",
     "extension-serve-static": ">=0.1.6",
-    "mini-tools": ">=0.0.2"
+    "mini-tools": ">=0.0.4"
   },
   "main": "bin/extension-serve.js",
   "devDependencies": {
